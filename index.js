@@ -8,7 +8,7 @@
   ctrl,
   scene,
   camera,
-  clock,
+  clock = new THREE.Clock(),
   mixer,
   y = 6,
   z = 20,
@@ -67,35 +67,23 @@
     //背景色
     renderer.setClearColor(0x000000, 1.0);
 
-    clock = new THREE.Clock();
+    // clock = new THREE.Clock();
 
 
     var cen;
     var loader = new THREE.ColladaLoader();
     loader.load(
       './data/simple.dae',
-      function(collada){
-        var anm = collada.animations;
-        cen = collada.scene;
-        cen.traverse(function(r){
-          if(r.isSkinnedMesh){
-            r.frustumCulled = false;
-          }
-        });
-
+      function(d){
+        cen = d.scene;
         mixer = new THREE.AnimationMixer(cen);
-        mixer.clipAction(anm[0]).play();
+        mixer.clipAction(d.animations[0]).play();
 
-        console.log(cen.animations);
+        cen.rotation.z = rad(-30);
 
         scene.add(cen);
       });
 
-      // var geo = new THREE.CylinderBufferGeometry(3,3,3);
-      // console.log(geo.attributes.position);
-      // var mat = new THREE.MeshBasicMaterial({color:0xff0000,wireframe:true});
-      // var mesh = new THREE.Mesh(geo,mat);
-      // scene.add(mesh);
 
       load();
     };
@@ -103,11 +91,10 @@
 
     //毎秒描画
     var load = function(){
-      var delta = clock.getDelta();
       ctrl.update();
 
       if(mixer !== undefined){
-        mixer.update(delta);
+        mixer.update(clock.getDelta());
       }
       renderer.render(scene,camera);
       requestAnimationFrame(load);
@@ -123,6 +110,8 @@
 
 
     init();
+
+
 
 
 
