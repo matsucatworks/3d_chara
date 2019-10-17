@@ -7,20 +7,62 @@
     <title>Document</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js"></script>
+    <script src="./stats.min.js"></script>
     <script src="./OrbitControls.js"></script>
     <script src="./ColladaLoader.js"></script>
     <!-- <script src="./GLTFLoader.js"></script> -->
 </head>
 <body>
+  <div class="loading"><div>0%</div><span><span style="width: 0%;"></span></span></div>
     <canvas></canvas>
     <style>
-    body{margin: 0;padding: 0;overflow: hidden;}
+    body{
+      margin: 0;padding: 0;overflow: hidden;
+      position: relative;
+    }
     canvas{
         /*margin-left: 200px;
         margin-top: 200px;
         width: 300px;
         height:300px;
         border:1px solid #000;*/
+    }
+    .loading{
+      background: #fff;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: -webkit-flex;
+      display: -ms-flex;
+      display: flex;
+      -ms-align-items: center;
+      align-items: center;
+      justify-content: center;
+      -webkit-flex-flow: column;
+      -ms-flex-flow: column;
+      flex-flow: column;
+      -webkit-transition: all 1s 1s;
+      -o-transition: all 1s 1s;
+      transition: all 1s 1s;
+    }
+    .loading.opacity{
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading > span{
+      width: 200px;
+      height: 32px;
+      background: #000;
+      display: block;
+    }
+
+    .loading > span span{
+      height: 100%;
+      display: block;
+      background: blue;
     }
     </style>
     <script src="./index.js"></script>

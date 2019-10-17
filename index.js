@@ -1,4 +1,4 @@
-/*globals THREE */
+/*globals THREE Stats */
 (() => {
   var dom = document.querySelector('canvas'),
   width = window.innerWidth,
@@ -10,6 +10,7 @@
   camera,
   clock = new THREE.Clock(),
   mixer,
+  stats,
   y = 6,
   z = 20,
   reqRet,
@@ -42,6 +43,9 @@
     renderer.setSize(width,height);
     renderer.setPixelRatio(window.devicePixelRatio);
 
+    stats = new Stats();
+    document.body.appendChild(stats.dom);
+
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(60,width / height,1,10000);
@@ -71,6 +75,7 @@
 
 
     var cen;
+
     var loader = new THREE.ColladaLoader();
     loader.load(
       './data/simple.dae',
@@ -82,7 +87,27 @@
         cen.rotation.z = rad(-30);
 
         scene.add(cen);
-      });
+      },
+      // called while loading is progressing
+      function ( xhr ) {
+        var per =  (xhr.loaded / xhr.total * 100) | 0;
+        $('.loading div').html(per + '%');
+        $('.loading span span').attr('style','width:'+per+'%;');
+
+        if(xhr.loaded === xhr.total){
+          $('.loading').addClass('opacity');
+        }
+
+        console.log(xhr);
+
+      },
+      // called when loading has errors
+      function ( error ) {
+
+        console.log( 'An error happened' );
+
+      }
+    );
 
 
       load();
@@ -97,6 +122,7 @@
         mixer.update(clock.getDelta());
       }
       renderer.render(scene,camera);
+      stats.update();
       requestAnimationFrame(load);
     };
 
