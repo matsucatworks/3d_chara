@@ -58,7 +58,8 @@
     light.position.set( 0, 100, 0 );
     scene.add( light );
 
-    light = new THREE.DirectionalLight( 0xffffff,0.5 );
+    // light = new THREE.DirectionalLight( 0xffffff );
+    light = new THREE.DirectionalLight( 0xffffff,0.6 );
     light.position.set( 0, 100, 200 );
     light.castShadow = true;
     light.shadow.camera.top = 100;
@@ -67,7 +68,7 @@
     light.shadow.camera.right = 100;
     scene.add( light );
 
-    // scene.add( new CameraHelper( light.shadow.camera ) );
+    // scene.add( new THREE.CameraHelper( light.shadow.camera ) );
 
     // ground
     var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 500, 500 ),
@@ -82,15 +83,28 @@
     scene.add( grid );
 
     // model
-    var loader = new THREE.ColladaLoader();
-    // var loader = new THREE.FBXLoader();
+    var mgt = new THREE.LoadingManager();
+    mgt.onProgress = function(url,loaded,total){
+      var per =  (loaded / total * 100) | 0;
+      $('.loading div').html(per + '%');
+      $('.loading span span').attr('style','width:'+per+'%;');
+    };
+
+    mgt.onLoad = function(){
+      $('.loading').addClass('opacity');
+    };
+
+    var loader = new THREE.ColladaLoader(mgt);
+    // var loader = new THREE.FBXLoader(mgt);
     loader.load(
       // 'bone_move.fbx',
       'data/simple.dae',
       function ( d ) {
+        // mixer = new THREE.AnimationMixer( d );
         mixer = new THREE.AnimationMixer( d.scene );
         mixer.clipAction( d.animations[ 0 ] ).play();
 
+        // d.traverse( function ( child ){
         d.scene.traverse( function ( child ){
           if ( child.isMesh ) {
             child.castShadow = true;
@@ -98,22 +112,13 @@
           }
         });
 
-        d.scene.scale.x = 10;
-        d.scene.scale.y = 10;
-        d.scene.scale.z = 10;
+        d.scene.scale.x = 16;
+        d.scene.scale.y = 16;
+        d.scene.scale.z = 16;
 
-        d.scene.position.y = 48;
+        d.scene.position.y = 78;
+
         scene.add( d.scene );
-      },
-      function(xhr){
-        var per =  (xhr.loaded / xhr.total * 100) | 0;
-        $('.loading div').html(per + '%');
-        $('.loading span span').attr('style','width:'+per+'%;');
-
-        if(xhr.loaded === xhr.total){
-          $('.loading').addClass('opacity');
-        }
-        // console.log(xhr);
       }
     );
 
